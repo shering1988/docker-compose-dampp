@@ -1,0 +1,41 @@
+services:
+  php:
+    container_name: dampp-php
+    build: docker/php
+    ports:
+      - '3700:443'
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - dampp-network
+
+  db:
+    container_name: dampp-mysql
+    image: mariadb:10.5.27
+    ports:
+      - '3701:3306'
+    expose:
+      - '3701'
+    volumes:
+      - ./docker/database/dump.sql:/docker-entrypoint-initdb.d/file.sql
+    # enable to store the database in memory and wipe all data once the container is stopped
+    #tmpfs:
+    #  - /var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - dampp-network
+
+  phpmyadmin:
+    image: phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - '3702:80'
+    environment:
+      PMA_HOST: db
+    networks:
+      - dampp-network
+networks:
+  dampp-network:
+    driver: bridge

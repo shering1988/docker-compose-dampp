@@ -1,0 +1,3 @@
+/docker/php/ssl/*.crt
+/docker/php/ssl/*.key
+/.idea/
